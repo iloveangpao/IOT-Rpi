@@ -25,6 +25,7 @@ class SensorDD():
 		
 		if (check is dht.DHTLIB_OK):
 			print("DHT11, OK!")
+			print("Temperature: " + str(dht.temperature) + " Humidity: " +  str(dht.humidity))
 		elif (check is dht.DHTLIB_ERROR_CHECKSUM):
 			print("DHTLIB_ERROR_CHECKSUM!!")
 		elif (check is dht.DHTLIB_ERROR_TIMEOUT):

@@ -7,7 +7,6 @@ import paho.mqtt.client as mqtt
 import time
 
 
-
 ########################################################
 ## Sensor & other configuration area
 ########################################################
@@ -29,12 +28,13 @@ SensorReads = SenseD.SensorDD()
 while True:
 	temp, humidity = SensorReads.get_temp_humidity(DHTPin)
 	distance = SensorReads.get_ultrasonic_range(trigPin, echoPin, MAX_DISTANCE, timeOut)
+	dataload = struct.pack('hhl', temp, humidity, distance)
 	try:
 		print(distance)
 		client=mqtt.Client()
 		client.username_pw_set("pidee","") # remove credentials before committing code
 		client.connect("m24.cloudmqtt.com",15247,60)
-		client.publish("pi", temp, qos=0) #pi is topic
+		client.publish("pi", dataload, qos=0) #pi is topic
 		time.sleep(1)
 	except KeyboardInterrupt:
 		print("end")
