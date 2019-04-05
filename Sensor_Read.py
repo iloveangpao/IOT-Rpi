@@ -13,7 +13,6 @@ class SensorDD():
 		humidity = 0
 		temperature = 0
 		distance = 0
-		# Setup for Ultrasonic detector
 		
 		
 	# Gets DHT module Temperature & Humidity Reading	

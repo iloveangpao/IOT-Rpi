@@ -4,6 +4,7 @@ from firebase_admin import credentials
 
 import RPi.GPIO as GPIO
 import Sensor_Read as SenseD
+import Servo as ServoD
 
 import struct
 import paho.mqtt.client as mqtt
@@ -15,7 +16,7 @@ import time
 ## Code has been adapated from previous assignment
 ########################################################
 config = {
-  "apiKey": "AIzaSyBOcnOiA0oWND8z9qZz0GKSlGfRcdsVMOA",
+  "apiKey": "",
   "authDomain": "iotproject-6f8af.firebaseapp.com",
   "databaseURL": "https://iotproject-6f8af.firebaseio.com",
   "projectId": "iotproject-6f8af",
@@ -52,13 +53,17 @@ DHTPin = 11 # Maps to GPIO 17
 # Ultrasonic sensor settings
 trigPin = 16
 echoPin = 18
-MAX_DISTANCE = 220 				# Max range to detect
-timeOut = MAX_DISTANCE * 60 	# Max * 60 seconds
+MAX_DISTANCE = 220		 				# Max range to detect
+timeOut = MAX_DISTANCE * 60				# Max * 60 seconds
+
+
 
 #################################################################
-# Create instance of Sensor_Read class to access helper methods
+# Create instances of:
+# Sensor_Read & Servo classes to access helper methods
 #################################################################
 SensorReads = SenseD.SensorDD() 
+Servo = ServoD.ServoDD()
 
 
 while True:
@@ -73,8 +78,12 @@ while True:
 	}
 	print(dataDict)
 	
+	# Call to check and adjust servo based on reading
+	Servo.loop(distance)
+	
 	# Push to firebase db
 	db.child("sensor_data").set(dataDict)
+	
 	try:
 		print(distance)
 		client=mqtt.Client()
@@ -84,4 +93,5 @@ while True:
 		time.sleep(1)
 	except KeyboardInterrupt:
 		print("end")
+		servo.destroy()
 		client.disconnect()
