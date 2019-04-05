@@ -15,7 +15,7 @@ import time
 ## Code has been adapated from previous assignment
 ########################################################
 config = {
-  "apiKey": "AIzaSyBDcnGiA0oWND8z9q2z0GKSIGfRcdsVM0A",
+  "apiKey": "AIzaSyBOcnOiA0oWND8z9qZz0GKSlGfRcdsVMOA",
   "authDomain": "iotproject-6f8af.firebaseapp.com",
   "databaseURL": "https://iotproject-6f8af.firebaseio.com",
   "projectId": "iotproject-6f8af",
@@ -41,7 +41,7 @@ user['idToken']
 
 # Get database service reference
 db = firebase.database()
-db.child("sensor_data").child("all_readings")
+#db.child("sensor_data").child("all_readings")
 
 ########################################################
 ## Sensor & other configuration area
@@ -63,7 +63,7 @@ SensorReads = SenseD.SensorDD()
 
 while True:
 	temp, humidity = SensorReads.get_temp_humidity(DHTPin)
-	distance = SensorReads.get_ultrasonic_range(trigPin, echoPin, MAX_DISTANCE, timeOut)
+	distance = round(SensorReads.get_ultrasonic_range(trigPin, echoPin, MAX_DISTANCE, timeOut), 2)
 	dataLoad = struct.pack('hhl', temp, humidity, distance)
 	
 	dataDict = {
