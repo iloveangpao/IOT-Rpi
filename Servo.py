@@ -12,7 +12,7 @@ import time
 
 class ServoDD():
 	def __init__(self):
-		pass
+		print(self, "no intialisation")
 		
 	global p
 	# Servo settings
@@ -41,9 +41,15 @@ class ServoDD():
 			angle = 180
 		p.ChangeDutyCycle(self.map(angle, 0, 180, self.SERVO_MIN_DUTY, self.SERVO_MAX_DUTY))#map the angle to duty cycle and output it
 		
-	def loop(self, reading):
-		if (reading > 0 and reading < 181):
+	def loop(self, reading, manualOverride):
+		UltraSonicRange = 0
+		
+		if (manualOverride == "OFF"):
 			UltraSonicRange = reading * 7.2
+		else:
+			UltraSonicRange = reading
+			
+		if (reading > 0 and reading < 181):
 			self.servoWrite(UltraSonicRange)
 
 		

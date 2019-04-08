@@ -42,6 +42,8 @@ user['idToken']
 
 # Get database service reference
 db = firebase.database()
+#db.child("ManualOverride").set("ON")
+#db.child("ServoAngle").set("90")
 #db.child("sensor_data").child("all_readings")
 
 ########################################################
@@ -71,23 +73,33 @@ while True:
 	distance = round(SensorReads.get_ultrasonic_range(trigPin, echoPin, MAX_DISTANCE, timeOut), 2)
 	dataLoad = struct.pack('hhl', temp, humidity, distance)
 	
+	# Manual Override for Servo
+	manualOverride = db.child("ManualOverride").get().val()
+	servoAngle = db.child("ServoAngle").get().val()
+		
 	dataDict = {
 	'temperature': str(temp),
 	'humidity': str(humidity),
 	'distance': str(distance)
 	}
 	print(dataDict)
-	
-	# Call to check and adjust servo based on reading
-	Servo.loop(distance)
+
+
+	if (manualOverride == "ON"):
+		Servo.loop(servoAngle, manualOverride)		
+	elif (manualOverride == "OFF"):
+		# Call to check and adjust servo based on reading
+		Servo.loop(distance, manualOverride)
+		print("Ultrasensor " + str(distance))
+
+
 	
 	# Push to firebase db
 	db.child("sensor_data").set(dataDict)
 	
 	try:
-		print(distance)
 		client=mqtt.Client()
-		client.username_pw_set("pidee","") # remove credentials before committing code
+		client.username_pw_set("","") # remove credentials before committing code
 		client.connect("m24.cloudmqtt.com",15247,60)
 		client.publish("pi", dataLoad, qos=0) #pi is topic
 		time.sleep(1)
